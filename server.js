@@ -40,6 +40,16 @@ app.get('/test-db', function (req, res){
     
 });
 
+function createTemplate(data){
+    var content = data.content
+    var htmlTemplate = `<html>
+                            <body>
+                                ${content}
+                            </body>
+                        </html>
+    `
+    return htmlTemplate;
+}
 app.get('/articles/:articleName', function (req, res){
     var articleName = req.params.articleName;
     pool.query("SELECT * from article WHERE title = '"  + articleName+"'", function(err, result){
@@ -50,7 +60,7 @@ app.get('/articles/:articleName', function (req, res){
                 result.status(404).send("Article not found");
             } else {
                 var articleData = result.rows[0];
-                res.send(createTamplate(articleData));
+                res.send(createTemplate(articleData));
             }
                 
         }
