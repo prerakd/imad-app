@@ -19,8 +19,8 @@ app.use(bodyParser.json());
 
 function hash(input, salt) {
    var  hashed = crypto.pbkdf2Sync(input, salt,10000, 512, 'sha512');
-    return hashed.toString('hex');
-};
+    return ["pbkdf2", "1000",salt,hashed.toString('hex')].join('$');
+}
 
 app.get('/hash/:input', function(req, res){
     var hashedString = hash(req.params.input, 'random-string');
@@ -47,6 +47,27 @@ app.post('/create-user', function(req, res){
             res.send("user successfully created"+username);
         }
     })
+});
+
+app.get('/login', function(req, res){
+     var username = req.body.username;
+    var password = req.body.password;
+    pool.query('SELECT * from "user" username = $1', [username], function(err, result){
+        if(err){
+            res.staus(500).send(err.toString());
+        } else if(result.rows.length === 0){
+            res.status(403).send('username/password is invalid');
+        } else {
+            var dbString = result.rows[0].password;
+            var salt = dbString.split('$')[2];
+            var hashedPassword = hash(password, salt);
+            if(hashedPassword === dbString){
+                res.send('credentials correct');
+            } else {
+                res.status(403).send('credentials in correct');
+            }
+        }
+    });
 })
 app.get('/ui/madi.png', function (req, res) {
   res.sendFile(path.join(__dirname, 'ui', 'madi.png'));
