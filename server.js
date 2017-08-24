@@ -49,10 +49,10 @@ app.post('/create-user', function(req, res){
     })
 });
 
-app.get('/login', function(req, res){
+app.post('/login', function(req, res){
      var username = req.body.username;
     var password = req.body.password;
-    pool.query('SELECT * from "user" username = $1', [username], function(err, result){
+    pool.query('SELECT * from "user" WHERE username = $1', [username], function(err, result){
         if(err){
             res.staus(500).send(err.toString());
         } else if(result.rows.length === 0){
