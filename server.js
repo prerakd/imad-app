@@ -35,10 +35,12 @@ app.get('/ui/style.css', function (req, res) {
   res.sendFile(path.join(__dirname, 'ui', 'style.css'));
 });
 
-app.post('create-user', function(req, res){
+app.post('/create-user', function(req, res){
     var username = req.body.usrename;
     var password = req.body.password;
-    pool.query('INSERT INTO "user" VALUES $1 $2', [username, password], function(err, res){
+    var salt = crypto.randomBytes(128).toString('hex');
+    var dbString = hash(password, salt);
+    pool.query('INSERT INTO "user" (userName, password) VALUES $1 $2', [username, password], function(err, res){
         if(err){
             res.status(500).send(err.toString());
         } else {
