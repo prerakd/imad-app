@@ -1,5 +1,5 @@
 var submit = document.getElementById('submit_btn');
-submit.onClick = function(){
+submit.onclick = function(){
     var request = new XMLHttpRequest();
     request.onreadystatechange = function(){
         if(request.readyState === XMLHttpRequest.DONE){
@@ -13,11 +13,13 @@ submit.onClick = function(){
                 alert('c skvjvn');
             }
         }
-    }
+    };
     
     var username = document.getElementById('username').value;
     var password = document.getElementById('password').value;
+    console.log(username);
+    console.log(password);
     request.open('POST', 'http://prerakdholakia.imad.hasura-app.io/login', true);
     request.setRequestHeader('Content-Type', 'application/json');
     request.send(JSON.stringify({ username: username, password: password}));
-}
+};
