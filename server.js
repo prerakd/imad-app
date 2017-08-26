@@ -88,7 +88,6 @@ app.get('/check-login', function(req, res){
     } else {
         res.send("You are not logged in ");
     }
-    }
 })
 
 var pool = new Pool(config);
