@@ -4,7 +4,7 @@ var path = require('path');
 var crypto = require('crypto');
 var bodyParser = require('body-parser');
 var Pool = require('pg').Pool;
-var session =require('express-session');
+var session = require('express-session');
 
 var config = {
     user: 'prerakdholakia',
@@ -69,6 +69,7 @@ app.post('/login', function(req, res){
             if(hashedPassword === dbString){
                 res.send('credentials correct');
                 req.session.auth = {userId: result.rows[0].id};
+                console.log(req.session.auth);
             } else {
                 res.status(403).send('credentials in correct');
             }
