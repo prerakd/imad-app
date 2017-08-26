@@ -83,8 +83,8 @@ app.get('/ui/main.js', function (req, res) {
 });
 
 app.get('/check-login', function(req, res){
-    if(req.session){
-          res.send("You are logged in");
+    if(req.session && req.session.auth && req.session.auth.userId){
+          res.send("You are logged in", req.session.auth.userId.toString());
     } else {
         res.send("You are not logged in ");
     }
