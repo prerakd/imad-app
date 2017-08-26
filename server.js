@@ -89,7 +89,7 @@ app.get('/check-login', function(req, res){
     } else {
         console.log(req.session);
         console.log(req.session.auth);
-        console.log(req.session.auth.userId);
+        // console.log(req.session.auth.userId);
         res.send("You are not logged in ");
     }
 })
