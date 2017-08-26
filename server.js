@@ -4,6 +4,7 @@ var path = require('path');
 var crypto = require('crypto');
 var bodyParser = require('body-parser');
 var Pool = require('pg').Pool;
+var session =require('express-session');
 
 var config = {
     user: 'prerakdholakia',
@@ -16,6 +17,10 @@ var config = {
 var app = express();
 app.use(morgan('combined'));
 app.use(bodyParser.json());
+app.use(session({
+    secret: 'someRandomValue',
+    cookie: { maxAge: 1000 * 60 * 60 * 24 * 30 }
+}))
 
 function hash(input, salt) {
    var  hashed = crypto.pbkdf2Sync(input, salt,10000, 512, 'sha512');
@@ -63,6 +68,7 @@ app.post('/login', function(req, res){
             var hashedPassword = hash(password, salt);
             if(hashedPassword === dbString){
                 res.send('credentials correct');
+                req.session.auth = {userId: result.rows[0].id};
             } else {
                 res.status(403).send('credentials in correct');
             }
@@ -75,6 +81,15 @@ app.get('/ui/madi.png', function (req, res) {
 app.get('/ui/main.js', function (req, res) {
   res.sendFile(path.join(__dirname, 'ui', 'main.js'));
 });
+
+app.get('/check-login', function(req, res){
+    if(req.session && req.session.auth && req.session.auth.userId){
+          res.send("You are logged in", req.session.auth.userId.toString());
+    } else {
+        res.send("You are not logged in ");
+    }
+    }
+})
 
 var pool = new Pool(config);
 app.get('/test-db', function (req, res){
